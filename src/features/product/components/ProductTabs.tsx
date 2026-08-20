@@ -1,0 +1,213 @@
+'use client'
+
+import { useState } from 'react'
+import {
+  FiShield,
+  FiTruck,
+  FiRefreshCw,
+  FiHeadphones,
+  FiLock,
+} from 'react-icons/fi'
+import { cn } from '@/lib/utils/format'
+import { Reveal } from '@/components/motion/Reveal'
+import type { Product } from '@/lib/types/product'
+
+const TABS = [
+  { key: 'description', label: 'Description' },
+  { key: 'additional', label: 'Additional Information' },
+  { key: 'specification', label: 'Specification' },
+  { key: 'reviews', label: 'Review' },
+] as const
+
+type TabKey = typeof TABS[number]['key']
+
+const FEATURES = [
+  { icon: FiShield, text: 'Free 1 Year Warranty' },
+  { icon: FiTruck, text: 'Free Shipping & Fasted Delivery' },
+  { icon: FiRefreshCw, text: '100% Money-back guarantee' },
+  { icon: FiHeadphones, text: '24/7 Customer support' },
+  { icon: FiLock, text: 'Secure payment method' },
+]
+
+const SHIPPING_INFO = [
+  { label: 'Courier:', value: '2 - 4 days' },
+  { label: 'Local Shipping:', value: 'up to one week' },
+  // { label: 'UPS Ground Shipping:', value: '4 - 6 days, $29.00' },
+  // { label: 'Unishop Global Export:', value: '3 - 4 days, $39.00' },
+]
+
+interface ProductTabsProps {
+  product: Product
+}
+
+export function ProductTabs({ product }: ProductTabsProps) {
+  const [activeTab, setActiveTab] = useState<TabKey>('description')
+
+  return (
+    <Reveal className="mt-10">
+      {/* Tab bar */}
+      <div className="flex gap-1 rounded-[10px] bg-[#F5F5F5] p-1 overflow-x-auto scrollbar-hide">
+        {TABS.map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={cn(
+              'shrink-0 px-5 py-2.5 text-[14px] rounded-[8px] transition-colors duration-150 whitespace-nowrap',
+              activeTab === tab.key
+                ? 'bg-[#FFFFFF] text-[#111111] shadow-[0_1px_3px_rgba(0,0,0,0.1)]'
+                : 'text-[#666666] hover:text-[#111111]'
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab content */}
+      <div className="py-6 text-[#666666] leading-[1.8]">
+        {activeTab === 'description' && (
+          <DescriptionTab product={product} />
+        )}
+        {activeTab === 'additional' && (
+          <AdditionalTab product={product} />
+        )}
+        {activeTab === 'specification' && (
+          <SpecificationTab product={product} />
+        )}
+        {activeTab === 'reviews' && (
+          <ReviewsTab product={product} />
+        )}
+      </div>
+    </Reveal>
+  )
+}
+
+// ─── Description tab — 3-col layout matching Figma ────────────────────────────
+
+function DescriptionTab({ product }: { product: Product }) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {/* Left: main description copy */}
+      <div className="md:col-span-1">
+        <h4 className="text-sm font-bold text-[#111111] mb-3">Description</h4>
+        <div
+          className="text-sm text-[#666666] leading-relaxed space-y-3 prose prose-sm max-w-none"
+          dangerouslySetInnerHTML={{ __html: product.description }}
+        />
+      </div>
+
+      {/* Middle: features list */}
+      <div className="md:col-span-1">
+        <h4 className="text-sm font-bold text-[#111111] mb-3">Feature</h4>
+        <ul className="space-y-3">
+          {FEATURES.map(({ icon: Icon, text }) => (
+            <li key={text} className="flex items-center gap-2.5 text-sm text-[#666666]">
+              <Icon size={15} className="text-[#F97316] shrink-0" />
+              {text}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Right: shipping info */}
+      <div className="md:col-span-1">
+        <h4 className="text-sm font-bold text-[#111111] mb-3">Shipping Information</h4>
+        <ul className="space-y-2">
+          {SHIPPING_INFO.map(({ label, value }) => (
+            <li key={label} className="text-sm">
+              <span className="font-semibold text-[#111111]">{label}</span>{' '}
+              <span className="text-[#666666]">{value}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  )
+}
+
+// ─── Additional Information ───────────────────────────────────────────────────
+
+function AdditionalTab({ product }: { product: Product }) {
+  return (
+    <div className="max-w-xl">
+      <table className="w-full text-sm border-collapse">
+        <tbody>
+          {product.attributes &&
+            Object.entries(product.attributes).map(([key, value]) => (
+              <tr key={key} className="border-b border-black/[0.06]">
+                <td className="py-2.5 pr-6 font-semibold text-[#111111] w-40 capitalize">
+                  {key.replace(/_/g, ' ')}
+                </td>
+                <td className="py-2.5 text-[#666666]">{value}</td>
+              </tr>
+            ))}
+          {(!product.attributes || Object.keys(product.attributes).length === 0) && (
+            <tr>
+              <td colSpan={2} className="py-4 text-[#666666] text-sm">
+                No additional information available.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+// ─── Specification ────────────────────────────────────────────────────────────
+
+function SpecificationTab({ product }: { product: Product }) {
+  return (
+    <div className="max-w-xl">
+      <table className="w-full text-sm border-collapse">
+        <tbody>
+          <tr className="border-b border-black/[0.06]">
+            <td className="py-2.5 pr-6 font-semibold text-[#111111] w-40">Brand</td>
+            <td className="py-2.5 text-[#666666]">{product.brandName}</td>
+          </tr>
+          <tr className="border-b border-black/[0.06]">
+            <td className="py-2.5 pr-6 font-semibold text-[#111111]">SKU</td>
+            <td className="py-2.5 text-[#666666]">{product.sku}</td>
+          </tr>
+          <tr className="border-b border-black/[0.06]">
+            <td className="py-2.5 pr-6 font-semibold text-[#111111]">Category</td>
+            <td className="py-2.5 text-[#666666]">{product.categoryName}</td>
+          </tr>
+          {product.tags && product.tags.length > 0 && (
+            <tr className="border-b border-black/[0.06]">
+              <td className="py-2.5 pr-6 font-semibold text-[#111111]">Tags</td>
+              <td className="py-2.5 text-[#666666]">{product.tags.join(', ')}</td>
+            </tr>
+          )}
+          {product.attributes &&
+            Object.entries(product.attributes).map(([key, value]) => (
+              <tr key={key} className="border-b border-black/[0.06]">
+                <td className="py-2.5 pr-6 font-semibold text-[#111111] capitalize">
+                  {key.replace(/_/g, ' ')}
+                </td>
+                <td className="py-2.5 text-[#666666]">{value}</td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+// ─── Reviews ──────────────────────────────────────────────────────────────────
+
+function ReviewsTab({ product }: { product: Product }) {
+  return (
+    <div className="text-center py-10">
+      <p className="text-4xl font-extrabold text-[#111111]">
+        {product.averageRating.toFixed(1)}
+      </p>
+      <p className="text-sm text-[#666666] mt-1">
+        Based on {product.reviewCount.toLocaleString()} reviews
+      </p>
+      <p className="mt-6 text-sm text-[#666666]">
+        Reviews are loaded from the API. Integration coming soon.
+      </p>
+    </div>
+  )
+}

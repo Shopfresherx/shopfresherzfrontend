@@ -1,0 +1,82 @@
+import { api } from "./client";
+import type { User } from "../types/user";
+
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+export interface RegisterPayload {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+export interface AuthResponse {
+  user: User;
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: string;
+}
+
+export interface RefreshPayload {
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface RefreshResponse {
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: string;
+  user: User;
+}
+
+export interface ForgotPasswordPayload {
+  email: string;
+}
+
+export interface ResetPasswordPayload {
+  email: string;
+  otp: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
+
+export interface GoogleLoginPayload {
+  idToken: string;
+}
+
+export interface GoogleAuthResponse {
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: string;
+  user: User;
+}
+
+export const authApi = {
+  login: (payload: LoginPayload) =>
+    api.post<AuthResponse>("/auth/login", payload),
+
+  register: (payload: RegisterPayload) =>
+    api.post<AuthResponse>("/auth/register", payload),
+
+  forgotPassword: (payload: ForgotPasswordPayload) =>
+    api.post<void>("/auth/forgot-password", payload),
+
+  resetPassword: (payload: ResetPasswordPayload) =>
+    api.post<void>("/auth/reset-password", payload),
+
+  logout: (token: string) => api.post<void>("/auth/logout", {}, { token }),
+
+  /** Exchange the current access + refresh token pair for a new one */
+  refresh: (payload: RefreshPayload) =>
+    api.post<RefreshResponse>("/auth/refresh", payload),
+
+  /** Validate current token + return fresh user object */
+  me: (token: string) => api.get<User>("/auth/me", { token }),
+
+  googleLogin: (payload: GoogleLoginPayload) =>
+    api.post<GoogleAuthResponse>("/auth/google", payload),
+};

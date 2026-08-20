@@ -1,0 +1,516 @@
+@import "tailwindcss";
+
+@tailwind utilities;
+
+:root {
+  --primary: #F97316;
+  --primary-dark: #EA580C;
+  --primary-light: rgba(249,115,22,0.1);
+
+  /* Base backgrounds */
+  --bg-base: #F5F2ED;
+  --bg-surface: #EEEAE3;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #FFFFFF;
+  --bg-elevated: #FFFFFF;
+  --bg-dark: #1A1A2E;
+  --bg-dark-surface: #242436;
+
+  /* Text */
+  --text-primary: #111111;
+  --text-secondary: #555555;
+  --text-muted: #888888;
+  --text-on-dark: #FFFFFF;
+  --text-on-dark-muted: #A0A0B0;
+
+  /* Borders */
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.15);
+  --border-dark: rgba(255,255,255,0.08);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  /* Shadows */
+  --shadow-card: 0 2px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-card-hover: 0 12px 32px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06);
+  --shadow-orange: 0 4px 15px rgba(249,115,22,0.3);
+  --shadow-orange-hover: 0 8px 25px rgba(249,115,22,0.45);
+  --shadow-glow: 0 0 40px rgba(249,115,22,0.15);
+  --shadow-3d: 0 20px 60px rgba(0,0,0,0.12), 0 8px 20px rgba(0,0,0,0.08);
+  --shadow-orange-glow: 0 0 30px rgba(249,115,22,0.25), 0 4px 16px rgba(249,115,22,0.15);
+
+  --background: var(--bg-base);
+  --foreground: var(--text-primary);
+  --font-sans: 'Inter', sans-serif;
+
+  --color-primary: #F97316;
+  --color-primary-dark: #EA580C;
+  --color-primary-light: rgba(249,115,22,0.1);
+  --color-secondary: #EEEAE3;
+  --color-accent: #F97316;
+  --color-surface: #EEEAE3;
+  --color-surface-card: #FFFFFF;
+  --color-success: #16A34A;
+  --color-danger: #DC2626;
+  --color-warning: #D97706;
+  --color-border: rgba(0,0,0,0.08);
+  --color-border-light: rgba(0,0,0,0.05);
+  --color-text-primary: #111111;
+  --color-text-secondary: #555555;
+  --color-text-muted: #888888;
+  --color-dark-bg: #1A1A2E;
+  --color-dark-card: #242436;
+  --color-dark-border: #2A2A3E;
+  --radius-card: 12px;
+  --radius-btn: 8px;
+  --radius-pill: 20px;
+  --color-surface-dark: var(--color-dark-card);
+  --color-text-inverse: #FFFFFF;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+
+  --color-primary: var(--color-primary);
+  --color-primary-dark: var(--color-primary-dark);
+  --color-primary-light: var(--color-primary-light);
+  --color-secondary: var(--color-secondary);
+  --color-accent: var(--color-accent);
+  --color-surface: var(--color-surface);
+  --color-surface-dark: var(--color-surface-dark);
+  --color-success: var(--color-success);
+  --color-danger: var(--color-danger);
+  --color-warning: var(--color-warning);
+  --color-border: var(--color-border);
+
+  --color-text-primary: var(--color-text-primary);
+  --color-text-inverse: var(--color-text-inverse);
+  --color-text-muted: var(--color-text-muted);
+
+  --color-muted: var(--color-text-muted);
+  --color-text: var(--color-text-primary);
+
+  --animate-marquee: 15s linear infinite;
+
+  --max-width-content: 1200px;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: var(--bg-base);
+    --foreground: var(--text-primary);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background-color: #F5F2ED !important;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text-primary);
+  background-color: #F5F2ED !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #EEEAE3; }
+::-webkit-scrollbar-thumb { background: #CCCCCC; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #F97316; }
+
+@layer utilities {
+  /* Hide scrollbar but keep scrollability */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+.badge-orange,
+.sf-badge-orange { background: rgba(249,115,22,0.15); color: #F97316; border: 1px solid rgba(249,115,22,0.25); box-shadow: 0 0 12px rgba(249,115,22,0.1); }
+.badge-green,
+.sf-badge-green { background: rgba(34,197,94,0.12); color: #22C55E; border: 1px solid rgba(34,197,94,0.2); }
+.badge-blue { background: rgba(96,165,250,0.12); color: #60A5FA; border: 1px solid rgba(96,165,250,0.2); }
+.badge-dark,
+.sf-badge-dark { background: rgba(255,255,255,0.08); color: #FFFFFF; border: 1px solid rgba(255,255,255,0.12); }
+.badge-hot { background: #111111; color: #FFFFFF; border: 1px solid #111111; }
+.badge-new { background: #22C55E; color: #FFFFFF; border: 1px solid #22C55E; }
+.badge-red,
+.sf-badge-red { background: rgba(239,68,68,0.12); color: #EF4444; border: 1px solid rgba(239,68,68,0.2); }
+
+.sf-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.btn-primary,
+.sf-btn-primary {
+  background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(249,115,22,0.3);
+}
+.btn-primary:hover,
+.sf-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(249,115,22,0.45);
+}
+
+.sf-btn-ghost {
+  background: rgba(255,255,255,0.05);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-md);
+  padding: 11px 22px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+.sf-btn-ghost:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.25);
+  transform: translateY(-1px);
+}
+
+.product-card,
+.sf-product-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(0,0,0,0.07);
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.product-card::before,
+.sf-product-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, rgba(249,115,22,0.03) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+.product-card::after,
+.sf-product-card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #F97316, transparent);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.product-card:hover,
+.sf-product-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(249,115,22,0.25);
+  box-shadow:
+    0 20px 40px rgba(0,0,0,0.1),
+    0 0 0 1px rgba(249,115,22,0.1);
+}
+.product-card:hover::before,
+.sf-product-card:hover::before { opacity: 1; }
+.product-card:hover::after,
+.sf-product-card:hover::after { opacity: 1; }
+
+.product-card .product-image,
+.sf-product-card .product-image {
+  transition: transform 0.4s ease;
+}
+.product-card:hover .product-image,
+.sf-product-card:hover .product-image {
+  transform: scale(1.08);
+}
+
+.sf-card-3d {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  position: relative;
+}
+.sf-card-3d::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+.sf-card-3d:hover {
+  transform: translateY(-8px) rotateX(2deg) rotateY(-1deg);
+  border-color: rgba(249,115,22,0.3);
+  box-shadow: var(--shadow-3d), var(--shadow-orange-glow);
+}
+
+.sf-glass {
+  background: rgba(20,20,20,0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.sf-glow-orange { box-shadow: 0 0 20px rgba(249,115,22,0.3), 0 0 40px rgba(249,115,22,0.1); }
+.sf-text-glow { text-shadow: 0 0 30px rgba(249,115,22,0.5); }
+.sf-input {
+  background: #141414;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: white;
+  width: 100%;
+  transition: all 0.2s ease;
+  outline: none;
+}
+.sf-input::placeholder { color: #444; }
+.sf-input:focus {
+  border-color: rgba(249,115,22,0.5);
+  box-shadow: 0 0 0 3px rgba(249,115,22,0.1), 0 0 20px rgba(249,115,22,0.05);
+}
+
+.input-light {
+  background: #FFFFFF;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 8px;
+  padding: 11px 16px;
+  font-size: 14px;
+  color: #111111;
+  width: 100%;
+  outline: none;
+  transition: all 0.2s;
+}
+.input-light::placeholder { color: #AAAAAA; }
+.input-light:focus {
+  border-color: rgba(249,115,22,0.5);
+  box-shadow: 0 0 0 3px rgba(249,115,22,0.08);
+}
+
+@keyframes float3d {
+  0%, 100% { transform: translateY(0) rotateX(0deg); }
+  50% { transform: translateY(-8px) rotateX(2deg); }
+}
+.sf-float { animation: float3d 4s ease-in-out infinite; }
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.sf-shimmer {
+  background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+.sf-section-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111111;
+  letter-spacing: -0.5px;
+}
+.sf-section-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* ── Hero entrance animations ─────────────────────────────────────── */
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.hero-title { animation: slideInLeft 0.6s ease forwards; }
+.hero-subtitle { animation: fadeInUp 0.6s ease 0.1s both; }
+.hero-price { animation: fadeInUp 0.6s ease 0.2s both; }
+.hero-buttons { animation: fadeInUp 0.6s ease 0.3s both; }
+.hero-badge { animation: scaleIn 0.4s ease forwards; }
+
+/* ── Hero side cards ──────────────────────────────────────────────── */
+.side-card {
+  transition: all 0.3s cubic-bezier(0.23,1,0.32,1);
+  cursor: pointer;
+}
+.side-card:hover {
+  transform: translateX(-4px) translateY(-2px);
+  border-color: rgba(249,115,22,0.4) !important;
+  box-shadow: 4px 8px 24px rgba(0,0,0,0.5),
+              0 0 20px rgba(249,115,22,0.1) !important;
+}
+
+/* ── Floating decorative elements ─────────────────────────────────── */
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.float { animation: floatY 4s ease-in-out infinite; }
+
+/* ── Section entrance animations ──────────────────────────────────── */
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease forwards;
+}
+.animate-delay-1 { animation-delay: 0.1s; }
+.animate-delay-2 { animation-delay: 0.2s; }
+.animate-delay-3 { animation-delay: 0.3s; }
+.animate-delay-4 { animation-delay: 0.4s; }
+
+/* ── Trust bar icons ──────────────────────────────────────────────── */
+.trust-icon {
+  transition: all 0.25s ease;
+}
+.trust-icon:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* ── Skeleton shimmer (brand cream/white tones, not generic gray) ──── */
+@keyframes sf-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.sf-skeleton {
+  background: linear-gradient(90deg, var(--bg-surface) 25%, #FBFAF7 50%, var(--bg-surface) 75%);
+  background-size: 200% 100%;
+  animation: sf-shimmer 1.6s ease-in-out infinite;
+}
+
+/* ── Dramatic 3D product card (tilt + cursor glow + ripple) ─────────
+   Mechanism intentionally mirrors a plain-CSS reference (ref-driven
+   inline transform + CSS transition) rather than Framer Motion springs
+   for the tilt itself — this keeps the exact 0.15s ease-out "snap to
+   cursor" feel and avoids per-mousemove React re-renders. Framer Motion
+   is still used for the whileInView entrance (see ProductCard.tsx). */
+.sf-tilt-card {
+  perspective: 1000px;
+}
+.sf-tilt-card-inner {
+  transition: transform 0.15s ease-out;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.sf-tilt-glow {
+  position: relative;
+}
+.sf-tilt-glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    600px circle at var(--gx, 50%) var(--gy, 50%),
+    rgba(249, 115, 22, 0.1),
+    transparent 40%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 5;
+}
+.sf-tilt-glow:hover::after,
+.sf-tilt-glow.sf-tilt-active::after {
+  opacity: 1;
+}
+
+/* Add to Cart ripple + success pulse */
+.sf-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+  transform: scale(0);
+  animation: sf-ripple 0.6s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes sf-ripple {
+  to { transform: scale(4); opacity: 0; }
+}
+@keyframes sf-add-success-pop {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  70% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+.sf-add-success {
+  animation: sf-add-success-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ── Reduced motion: disable custom motion utilities site-wide ─────── */
+@media (prefers-reduced-motion: reduce) {
+  .float,
+  .animate-fade-in-up,
+  .hero-title, .hero-subtitle, .hero-price, .hero-buttons, .hero-badge,
+  .sf-skeleton {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .trust-icon:hover,
+  .side-card:hover,
+  .sf-card-3d:hover {
+    transform: none !important;
+  }
+  .sf-tilt-card-inner {
+    transition: none !important;
+    transform: none !important;
+  }
+  .sf-tilt-glow::after {
+    transition: none !important;
+  }
+}
