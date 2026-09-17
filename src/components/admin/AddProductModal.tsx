@@ -218,62 +218,76 @@ export default function AddProductModal({
   }
 };
 
-  const handleSubmit = async () => {
-    if (!form.name || !form.price) {
-      alert("Please fill in all required fields");
-      return;
+ const handleSubmit = async () => {
+  if (!form.name.trim() || !form.price) {
+    alert("Please fill in all required fields");
+    return;
+  }
+
+  try {
+    const sku = form.sku.trim() || generateSKU();
+    const slug = form.slug.trim() || generateSlug(form.name);
+
+    const productData = {
+      sku,
+      name: form.name.trim(),
+      slug,
+
+      brandId: form.brandId || undefined,
+
+      categoryId: form.categoryId
+        ? Number(form.categoryId)
+        : undefined,
+
+      description: form.description || undefined,
+
+      price: Number(form.price),
+
+      compareAtPrice: form.compareAtPrice
+        ? Number(form.compareAtPrice)
+        : undefined,
+
+      stockQty: form.stockQty
+        ? Number(form.stockQty)
+        : 0,
+
+      metaTitle: form.metaTitle || undefined,
+
+      metaDescription: form.metaDescription || undefined,
+
+      isActive: form.isActive,
+      isFeatured: form.isFeatured,
+
+      imageUrls: form.imageUrls,
+
+      initialRating: form.initialRating
+        ? Number(form.initialRating)
+        : undefined,
+
+      initialReviewCount: form.initialReviewCount
+        ? Number(form.initialReviewCount)
+        : undefined,
+    };
+
+    console.log(
+      "FINAL PRODUCT UPDATE PAYLOAD:",
+      JSON.stringify(productData, null, 2)
+    );
+
+    if (isEditing && editingProduct) {
+      await updateProductMutation.mutateAsync({
+        id: editingProduct.id,
+        payload: productData,
+      });
+    } else {
+      await createProductMutation.mutateAsync(productData);
     }
 
-    try {
-      // Auto-generate SKU and slug if not provided
-      const sku = form.sku || generateSKU();
-      const slug = form.slug || generateSlug(form.name);
-
-      const productData = {
-  sku,
-  name: form.name,
-  slug,
-  brandId: form.brandId || undefined,
-  categoryId: form.categoryId
-    ? parseInt(form.categoryId)
-    : undefined,
-  description: form.description,
-  price: parseFloat(form.price),
-  compareAtPrice: form.compareAtPrice
-    ? parseFloat(form.compareAtPrice)
-    : undefined,
-  stockQty: parseInt(form.stockQty) || 0,
-  metaTitle: form.metaTitle || undefined,
-  metaDescription: form.metaDescription || undefined,
-  isActive: form.isActive,
-  isFeatured: form.isFeatured,
-  imageUrls: form.imageUrls,
-  initialRating: form.initialRating
-    ? parseFloat(form.initialRating)
-    : undefined,
-  initialReviewCount: form.initialReviewCount
-    ? parseInt(form.initialReviewCount)
-    : undefined,
+    onClose();
+  } catch (error) {
+    console.error("Failed to save product:", error);
+  }
 };
-      console.log(
-        "Submitting product payload:",
-        JSON.stringify(productData, null, 2),
-      );
-
-      if (isEditing && editingProduct) {
-        await updateProductMutation.mutateAsync({
-          id: editingProduct.id,
-          payload: productData as any,
-        });
-      } else {
-        await createProductMutation.mutateAsync(productData);
-      }
-
-      onClose();
-    } catch (error) {
-      console.error("Failed to save product:", error);
-    }
-  };
 
   if (!isOpen) return null;
 
