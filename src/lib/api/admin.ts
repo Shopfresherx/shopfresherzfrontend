@@ -694,7 +694,7 @@ export const adminApi = {
     }),
 
   deleteProduct: (token: string, id: string) =>
-    api.delete<void>(`/admin/products/${encodeURIComponent(id)}`, { token }),
+    api.delete<void>(`/products/${encodeURIComponent(id)}`, { token }),
 
   getFlashDeals: () => api.get<FlashDealDto[]>("/flash-deals"),
 
