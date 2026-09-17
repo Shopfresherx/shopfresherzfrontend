@@ -259,9 +259,7 @@ export interface CreateProductRequest {
   initialReviewCount?: number;
 }
 
-export interface UpdateProductRequest extends Partial<CreateProductRequest> {
-  id: string;
-}
+export type UpdateProductRequest = Partial<CreateProductRequest>;
 
 export type ProductDto = Product & Record<string, unknown>;
 
