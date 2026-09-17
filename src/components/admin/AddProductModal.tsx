@@ -123,6 +123,9 @@ export default function AddProductModal({
   // Initialize form with editing product data
   useEffect(() => {
     if (editingProduct) {
+			 console.log("EDITING PRODUCT:", editingProduct);
+    	 console.log("EDITING IMAGES:", editingProduct.images);
+			
       setForm({
         name: editingProduct.name || "",
         description: editingProduct.description || "",
@@ -193,30 +196,20 @@ export default function AddProductModal({
 
   const handleImageUpload = async (files: FileList) => {
   setIsUploading(true);
+
   try {
     const incomingFiles = Array.from(files);
 
-    if (isEditing) {
-      // Replace mode: delete all existing Cloudinary images, then upload new ones
-      const deletePromises = form.imageUrls.map((url) =>
-        deleteFromCloudinary(url).catch(console.error) // non-blocking
-      );
-      await Promise.all(deletePromises);
+    const uploadPromises = incomingFiles.map((file) =>
+      uploadToCloudinary(file)
+    );
 
-      const uploadPromises = incomingFiles.map((file) => uploadToCloudinary(file));
-      const urls = await Promise.all(uploadPromises);
+    const urls = await Promise.all(uploadPromises);
 
-      setForm((prev) => ({ ...prev, imageUrls: urls })); // replace, not append
-    } else {
-      // Create mode: append as before
-      const uploadPromises = incomingFiles.map((file) => uploadToCloudinary(file));
-      const urls = await Promise.all(uploadPromises);
-
-      setForm((prev) => ({
-        ...prev,
-        imageUrls: [...prev.imageUrls, ...urls],
-      }));
-    }
+    setForm((prev) => ({
+      ...prev,
+      imageUrls: [...prev.imageUrls, ...urls],
+    }));
   } catch (error) {
     console.error("Failed to upload images:", error);
     alert("Failed to upload images. Please try again.");
@@ -237,30 +230,31 @@ export default function AddProductModal({
       const slug = form.slug || generateSlug(form.name);
 
       const productData = {
-        sku,
-        name: form.name,
-        slug,
-        brandId: form.brandId,
-        categoryId: form.categoryId ? parseInt(form.categoryId) : undefined,
-        description: form.description,
-        price: parseFloat(form.price),
-        compareAtPrice: form.compareAtPrice
-          ? parseFloat(form.compareAtPrice)
-          : undefined,
-        stockQty: parseInt(form.stockQty) || 0,
-        metaTitle: form.metaTitle,
-        metaDescription: form.metaDescription,
-        isActive: form.isActive,
-        isFeatured: form.isFeatured,
-        imageUrls: form.imageUrls,
-        initialRating: form.initialRating
-          ? parseFloat(form.initialRating)
-          : undefined,
-        initialReviewCount: form.initialReviewCount
-          ? parseInt(form.initialReviewCount)
-          : undefined,
-      };
-
+  sku,
+  name: form.name,
+  slug,
+  brandId: form.brandId || undefined,
+  categoryId: form.categoryId
+    ? parseInt(form.categoryId)
+    : undefined,
+  description: form.description,
+  price: parseFloat(form.price),
+  compareAtPrice: form.compareAtPrice
+    ? parseFloat(form.compareAtPrice)
+    : undefined,
+  stockQty: parseInt(form.stockQty) || 0,
+  metaTitle: form.metaTitle || undefined,
+  metaDescription: form.metaDescription || undefined,
+  isActive: form.isActive,
+  isFeatured: form.isFeatured,
+  imageUrls: form.imageUrls,
+  initialRating: form.initialRating
+    ? parseFloat(form.initialRating)
+    : undefined,
+  initialReviewCount: form.initialReviewCount
+    ? parseInt(form.initialReviewCount)
+    : undefined,
+};
       console.log(
         "Submitting product payload:",
         JSON.stringify(productData, null, 2),
@@ -527,18 +521,14 @@ export default function AddProductModal({
                         className="w-16 h-16 object-cover rounded-lg border"
                       />
                       <button
-                        onClick={async () => {
-                          const urlToRemove = form.imageUrls[index];
-                          await deleteFromCloudinary(urlToRemove).catch(
-                            console.error,
-                          );
-                          setForm((prev) => ({
-                            ...prev,
-                            imageUrls: prev.imageUrls.filter(
-                              (_, i) => i !== index,
-                            ),
-                          }));
-                        }}
+                       onClick={() => {
+  											setForm((prev) => ({
+   											 ...prev,
+   											 imageUrls: prev.imageUrls.filter(
+   											   (_, i) => i !== index
+  										  ),
+ 											 }));
+											}}
                         className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs"
                       >
                         ×
