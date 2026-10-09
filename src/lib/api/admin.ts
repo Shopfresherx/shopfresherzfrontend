@@ -683,6 +683,21 @@ export const adminApi = {
       },
     }),
 
+  importProductsCsv: (token: string, file: File) => {
+    const form = new FormData();
+    form.append("file", file);
+    return apiFetch<{
+      created: number;
+      updated: number;
+      failed: number;
+      errors: string[];
+    }>("/products/import-csv", {
+      method: "POST",
+      body: form,
+      token,
+    });
+  },
+
   createProduct: (token: string, payload: CreateProductRequest) =>
     api.post<ProductDto>("/products", payload, { token }),
 

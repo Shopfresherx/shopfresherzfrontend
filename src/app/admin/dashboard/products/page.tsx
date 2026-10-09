@@ -4,7 +4,10 @@ import { ColumnDef, DataTable } from "@/components/ui/DataTable";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { LuPencil } from "react-icons/lu";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAuthStore } from "@/store/auth";
+import { adminApi } from "@/lib/api/admin";
 import AddProductModal from "@/components/admin/AddProductModal";
 import { useProducts, useDeleteProduct, useCategories, useBrands } from "@/lib/hooks/useAdmin";
 import type { AdminProductsFilters } from "@/lib/api/admin";
@@ -62,6 +65,37 @@ const products = [
 const AdminProductsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
+  const csvInputRef = useRef<HTMLInputElement>(null);
+  const [isImporting, setIsImporting] = useState(false);
+  const [importMessage, setImportMessage] = useState("");
+  const { accessToken } = useAuthStore();
+  const queryClient = useQueryClient();
+
+  const handleCsvImport = async (file?: File) => {
+    if (!file) return;
+    setImportMessage("");
+    setIsImporting(true);
+    try {
+      if (!accessToken) throw new Error("Please sign in again before importing.");
+      const result = await adminApi.importProductsCsv(accessToken, file);
+      await queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
+      const summary = `Import complete: ${result.created} created, ${result.updated} updated, ${result.failed} failed.`;
+      setImportMessage(
+        result.errors.length
+          ? `${summary} ${result.errors.slice(0, 8).join(" ")}`
+          : summary
+      );
+    } catch (error) {
+      const message =
+        typeof error === "object" && error !== null && "message" in error
+          ? String((error as { message: unknown }).message)
+          : "Could not import the CSV file.";
+      setImportMessage(`Import failed: ${message}`);
+    } finally {
+      setIsImporting(false);
+      if (csvInputRef.current) csvInputRef.current.value = "";
+    }
+  };
   // pageSize is generous rather than paginated — there's no page-through UI
   // on this table yet, so we ask for enough rows to show the whole catalog
   // in one response instead of silently truncating to the API's default 20.
@@ -210,11 +244,20 @@ const AdminProductsPage = () => {
 
         {/* Buttons */}
         <div className="flex gap-3 ">
+          <input
+            ref={csvInputRef}
+            type="file"
+            accept=".csv,text/csv"
+            className="hidden"
+            onChange={(event) => void handleCsvImport(event.target.files?.[0])}
+          />
           <Button
             variant="ghost"
             className="text-xs md:text-sm rounded-md text-gray-500"
+            disabled={isImporting}
+            onClick={() => csvInputRef.current?.click()}
           >
-            Import CSV
+            {isImporting ? "IMPORTING..." : "IMPORT CSV"}
           </Button>{" "}
           <Button
             className="text-xs md:text-sm rounded-md"
@@ -224,6 +267,12 @@ const AdminProductsPage = () => {
           </Button>
         </div>
       </div>
+
+      {importMessage && (
+        <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700 whitespace-pre-wrap">
+          {importMessage}
+        </div>
+      )}
 
       {isLoading ? (
         <div className="text-center py-8"><Spinner/></div>
